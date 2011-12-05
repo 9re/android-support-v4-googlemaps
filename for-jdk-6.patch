@@ -1,0 +1,16 @@
+diff --git a/src/java/android/support/v4/app/Fragment.java b/src/java/android/support/v4/app/Fragment.java
+index dabd9cf..10892e0 100644
+--- a/src/java/android/support/v4/app/Fragment.java
++++ b/src/java/android/support/v4/app/Fragment.java
+@@ -533,9 +533,8 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
+     /**
+      * Return the Activity this fragment is currently associated with.
+      */
+-    @SuppressWarnings("unchecked")
+-    final public <FragmentActivityImpl extends Activity & FragmentActivityFeature> FragmentActivityImpl getActivity() {
+-        return (FragmentActivityImpl) mActivity;
++    final public Activity getActivity() {
++        return mActivity;
+     }
+     
+     <FragmentActivityImpl extends Activity & FragmentActivityFeature> void setActivity(FragmentActivityImpl activity) {
