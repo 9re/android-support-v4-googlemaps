@@ -16,6 +16,12 @@
 
 package android.support.v4.app;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -27,25 +33,20 @@ import android.support.v4.util.DebugUtils;
 import android.support.v4.util.LogWriter;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.view.animation.ScaleAnimation;
 
 /**
  * Static library support version of the framework's {@link android.app.FragmentManager}.
@@ -374,7 +375,7 @@ final class FragmentManagerState implements Parcelable {
 /**
  * Container for fragments associated with an activity.
  */
-final class FragmentManagerImpl extends FragmentManager {
+final class FragmentManagerImpl<FragmentActivityImpl extends Activity & FragmentActivityFeature> extends FragmentManager {
     static boolean DEBUG = false;
     static final String TAG = "FragmentManager";
     
@@ -401,7 +402,7 @@ final class FragmentManagerImpl extends FragmentManager {
     ArrayList<OnBackStackChangedListener> mBackStackChangeListeners;
 
     int mCurState = Fragment.INITIALIZING;
-    FragmentActivity mActivity;
+    FragmentActivityImpl mActivity;
     
     boolean mNeedMenuInvalidate;
     boolean mStateSaved;
@@ -433,7 +434,7 @@ final class FragmentManagerImpl extends FragmentManager {
     public void popBackStack() {
         enqueueAction(new Runnable() {
             @Override public void run() {
-                popBackStackState(mActivity.mHandler, null, -1, 0);
+                popBackStackState(mActivity.getHandler(), null, -1, 0);
             }
         }, false);
     }
@@ -442,14 +443,14 @@ final class FragmentManagerImpl extends FragmentManager {
     public boolean popBackStackImmediate() {
         checkStateLoss();
         executePendingTransactions();
-        return popBackStackState(mActivity.mHandler, null, -1, 0);
+        return popBackStackState(mActivity.getHandler(), null, -1, 0);
     }
 
     @Override
     public void popBackStack(final String name, final int flags) {
         enqueueAction(new Runnable() {
             @Override public void run() {
-                popBackStackState(mActivity.mHandler, name, -1, flags);
+                popBackStackState(mActivity.getHandler(), name, -1, flags);
             }
         }, false);
     }
@@ -458,7 +459,7 @@ final class FragmentManagerImpl extends FragmentManager {
     public boolean popBackStackImmediate(String name, int flags) {
         checkStateLoss();
         executePendingTransactions();
-        return popBackStackState(mActivity.mHandler, name, -1, flags);
+        return popBackStackState(mActivity.getHandler(), name, -1, flags);
     }
 
     @Override
@@ -468,7 +469,7 @@ final class FragmentManagerImpl extends FragmentManager {
         }
         enqueueAction(new Runnable() {
             @Override public void run() {
-                popBackStackState(mActivity.mHandler, null, id, flags);
+                popBackStackState(mActivity.getHandler(), null, id, flags);
             }
         }, false);
     }
@@ -480,7 +481,7 @@ final class FragmentManagerImpl extends FragmentManager {
         if (id < 0) {
             throw new IllegalArgumentException("Bad id: " + id);
         }
-        return popBackStackState(mActivity.mHandler, null, id, flags);
+        return popBackStackState(mActivity.getHandler(), null, id, flags);
     }
 
     @Override
@@ -793,8 +794,8 @@ final class FragmentManagerImpl extends FragmentManager {
                                     FragmentManagerImpl.TARGET_REQUEST_CODE_STATE_TAG, 0);
                         }
                     }
-                    f.mActivity = mActivity;
-                    f.mFragmentManager = mActivity.mFragments;
+                    f.setActivity(mActivity);
+                    f.mFragmentManager = mActivity.getFragmentManagerImpl();
                     f.mCalled = false;
                     f.onAttach(mActivity);
                     if (!f.mCalled) {
@@ -1017,7 +1018,7 @@ final class FragmentManagerImpl extends FragmentManager {
                             if (!f.mRetaining) {
                                 makeInactive(f);
                             } else {
-                                f.mActivity = null;
+                                f.setActivity((FragmentActivityImpl)null);
                                 f.mFragmentManager = null;
                             }
                         }
@@ -1197,6 +1198,7 @@ final class FragmentManagerImpl extends FragmentManager {
         }
     }
 
+    @Override
     public Fragment findFragmentById(int id) {
         if (mActive != null) {
             // First look through added fragments.
@@ -1217,6 +1219,7 @@ final class FragmentManagerImpl extends FragmentManager {
         return null;
     }
     
+    @Override
     public Fragment findFragmentByTag(String tag) {
         if (mActive != null && tag != null) {
             // First look through added fragments.
@@ -1273,8 +1276,8 @@ final class FragmentManagerImpl extends FragmentManager {
             }
             mPendingActions.add(action);
             if (mPendingActions.size() == 1) {
-                mActivity.mHandler.removeCallbacks(mExecCommit);
-                mActivity.mHandler.post(mExecCommit);
+                mActivity.getHandler().removeCallbacks(mExecCommit);
+                mActivity.getHandler().post(mExecCommit);
             }
         }
     }
@@ -1343,7 +1346,7 @@ final class FragmentManagerImpl extends FragmentManager {
             throw new IllegalStateException("Recursive entry to executePendingTransactions");
         }
         
-        if (Looper.myLooper() != mActivity.mHandler.getLooper()) {
+        if (Looper.myLooper() != mActivity.getHandler().getLooper()) {
             throw new IllegalStateException("Must be called from main thread of process");
         }
 
@@ -1363,7 +1366,7 @@ final class FragmentManagerImpl extends FragmentManager {
                 }
                 mPendingActions.toArray(mTmpActions);
                 mPendingActions.clear();
-                mActivity.mHandler.removeCallbacks(mExecCommit);
+                mActivity.getHandler().removeCallbacks(mExecCommit);
             }
             
             mExecutingActions = true;
@@ -1727,7 +1730,7 @@ final class FragmentManagerImpl extends FragmentManager {
         }
     }
     
-    public void attachActivity(FragmentActivity activity) {
+    public void attachActivity(FragmentActivityImpl activity) {
         if (mActivity != null) throw new IllegalStateException();
         mActivity = activity;
     }

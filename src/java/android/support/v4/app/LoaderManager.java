@@ -192,7 +192,7 @@ class LoaderManagerImpl extends LoaderManager {
     // previously run loader until the new loader's data is available.
     final HCSparseArray<LoaderInfo> mInactiveLoaders = new HCSparseArray<LoaderInfo>();
 
-    FragmentActivity mActivity;
+    FragmentActivityFeature mActivity;
     boolean mStarted;
     boolean mRetaining;
     boolean mRetainingStarted;
@@ -323,14 +323,14 @@ class LoaderManagerImpl extends LoaderManager {
                 if (DEBUG) Log.v(TAG, "  Reseting: " + this);
                 String lastBecause = null;
                 if (mActivity != null) {
-                    lastBecause = mActivity.mFragments.mNoTransactionsBecause;
-                    mActivity.mFragments.mNoTransactionsBecause = "onLoaderReset";
+                    lastBecause = mActivity.getFragmentManagerImpl().mNoTransactionsBecause;
+                    mActivity.getFragmentManagerImpl().mNoTransactionsBecause = "onLoaderReset";
                 }
                 try {
                     mCallbacks.onLoaderReset(mLoader);
                 } finally {
                     if (mActivity != null) {
-                        mActivity.mFragments.mNoTransactionsBecause = lastBecause;
+                        mActivity.getFragmentManagerImpl().mNoTransactionsBecause = lastBecause;
                     }
                 }
             }
@@ -405,8 +405,8 @@ class LoaderManagerImpl extends LoaderManager {
             if (mCallbacks != null) {
                 String lastBecause = null;
                 if (mActivity != null) {
-                    lastBecause = mActivity.mFragments.mNoTransactionsBecause;
-                    mActivity.mFragments.mNoTransactionsBecause = "onLoadFinished";
+                    lastBecause = mActivity.getFragmentManagerImpl().mNoTransactionsBecause;
+                    mActivity.getFragmentManagerImpl().mNoTransactionsBecause = "onLoadFinished";
                 }
                 try {
                     if (DEBUG) Log.v(TAG, "  onLoadFinished in " + loader + ": "
@@ -414,7 +414,7 @@ class LoaderManagerImpl extends LoaderManager {
                     mCallbacks.onLoadFinished(loader, data);
                 } finally {
                     if (mActivity != null) {
-                        mActivity.mFragments.mNoTransactionsBecause = lastBecause;
+                        mActivity.getFragmentManagerImpl().mNoTransactionsBecause = lastBecause;
                     }
                 }
                 mDeliveredData = true;
@@ -461,12 +461,12 @@ class LoaderManagerImpl extends LoaderManager {
         }
     }
     
-    LoaderManagerImpl(FragmentActivity activity, boolean started) {
+    LoaderManagerImpl(FragmentActivityFeature activity, boolean started) {
         mActivity = activity;
         mStarted = started;
     }
     
-    void updateActivity(FragmentActivity activity) {
+    void updateActivity(FragmentActivityFeature activity) {
         mActivity = activity;
     }
     
@@ -524,6 +524,7 @@ class LoaderManagerImpl extends LoaderManager {
      * Its onCreateLoader() method will be called while inside of the function to
      * instantiate the Loader object.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <D> Loader<D> initLoader(int id, Bundle args, LoaderManager.LoaderCallbacks<D> callback) {
         if (mCreatingLoader) {
@@ -574,6 +575,7 @@ class LoaderManagerImpl extends LoaderManager {
      * Its onCreateLoader() method will be called while inside of the function to
      * instantiate the Loader object.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <D> Loader<D> restartLoader(int id, Bundle args, LoaderManager.LoaderCallbacks<D> callback) {
         if (mCreatingLoader) {
@@ -640,6 +642,7 @@ class LoaderManagerImpl extends LoaderManager {
      * be using it when you do this.
      * @param id Identifier of the Loader to be destroyed.
      */
+    @Override
     public void destroyLoader(int id) {
         if (mCreatingLoader) {
             throw new IllegalStateException("Called while creating a loader");
@@ -664,6 +667,7 @@ class LoaderManagerImpl extends LoaderManager {
      * Return the most recent Loader object associated with the
      * given ID.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <D> Loader<D> getLoader(int id) {
         if (mCreatingLoader) {

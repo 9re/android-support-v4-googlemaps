@@ -36,7 +36,7 @@ final class BackStackState implements Parcelable {
     final int mBreadCrumbShortTitleRes;
     final CharSequence mBreadCrumbShortTitleText;
 
-    public BackStackState(FragmentManagerImpl fm, BackStackRecord bse) {
+    public BackStackState(FragmentManagerImpl<?> fm, BackStackRecord bse) {
         int numRemoved = 0;
         BackStackRecord.Op op = bse.mHead;
         while (op != null) {
@@ -91,7 +91,7 @@ final class BackStackState implements Parcelable {
         mBreadCrumbShortTitleText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(in);
     }
 
-    public BackStackRecord instantiate(FragmentManagerImpl fm) {
+    public BackStackRecord instantiate(FragmentManagerImpl<?> fm) {
         BackStackRecord bse = new BackStackRecord(fm);
         int pos = 0;
         while (pos < mOps.length) {
@@ -165,7 +165,7 @@ final class BackStackRecord extends FragmentTransaction implements
         FragmentManager.BackStackEntry, Runnable {
     static final String TAG = "BackStackEntry";
 
-    final FragmentManagerImpl mManager;
+    final FragmentManagerImpl<?> mManager;
 
     static final int OP_NULL = 0;
     static final int OP_ADD = 1;
@@ -283,7 +283,7 @@ final class BackStackRecord extends FragmentTransaction implements
         }
     }
 
-    public BackStackRecord(FragmentManagerImpl manager) {
+    public BackStackRecord(FragmentManagerImpl<?> manager) {
         mManager = manager;
     }
 
@@ -328,16 +328,19 @@ final class BackStackRecord extends FragmentTransaction implements
         mNumOp++;
     }
 
+    @Override
     public FragmentTransaction add(Fragment fragment, String tag) {
         doAddOp(0, fragment, tag, OP_ADD);
         return this;
     }
 
+    @Override
     public FragmentTransaction add(int containerViewId, Fragment fragment) {
         doAddOp(containerViewId, fragment, null, OP_ADD);
         return this;
     }
 
+    @Override
     public FragmentTransaction add(int containerViewId, Fragment fragment, String tag) {
         doAddOp(containerViewId, fragment, tag, OP_ADD);
         return this;
@@ -370,10 +373,12 @@ final class BackStackRecord extends FragmentTransaction implements
         addOp(op);
     }
 
+    @Override
     public FragmentTransaction replace(int containerViewId, Fragment fragment) {
         return replace(containerViewId, fragment, null);
     }
 
+    @Override
     public FragmentTransaction replace(int containerViewId, Fragment fragment, String tag) {
         if (containerViewId == 0) {
             throw new IllegalArgumentException("Must use non-zero containerViewId");
@@ -383,6 +388,7 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction remove(Fragment fragment) {
         Op op = new Op();
         op.cmd = OP_REMOVE;
@@ -392,6 +398,7 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction hide(Fragment fragment) {
         Op op = new Op();
         op.cmd = OP_HIDE;
@@ -401,6 +408,7 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction show(Fragment fragment) {
         Op op = new Op();
         op.cmd = OP_SHOW;
@@ -410,6 +418,7 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction detach(Fragment fragment) {
         Op op = new Op();
         op.cmd = OP_DETACH;
@@ -419,6 +428,7 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction attach(Fragment fragment) {
         Op op = new Op();
         op.cmd = OP_ATTACH;
@@ -428,10 +438,12 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction setCustomAnimations(int enter, int exit) {
         return setCustomAnimations(enter, exit, 0, 0);
     }
 
+    @Override
     public FragmentTransaction setCustomAnimations(int enter, int exit,
             int popEnter, int popExit) {
         mEnterAnim = enter;
@@ -441,16 +453,19 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction setTransition(int transition) {
         mTransition = transition;
         return this;
     }
 
+    @Override
     public FragmentTransaction setTransitionStyle(int styleRes) {
         mTransitionStyle = styleRes;
         return this;
     }
 
+    @Override
     public FragmentTransaction addToBackStack(String name) {
         if (!mAllowAddToBackStack) {
             throw new IllegalStateException(
@@ -461,10 +476,12 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public boolean isAddToBackStackAllowed() {
         return mAllowAddToBackStack;
     }
 
+    @Override
     public FragmentTransaction disallowAddToBackStack() {
         if (mAddToBackStack) {
             throw new IllegalStateException(
@@ -474,24 +491,28 @@ final class BackStackRecord extends FragmentTransaction implements
         return this;
     }
 
+    @Override
     public FragmentTransaction setBreadCrumbTitle(int res) {
         mBreadCrumbTitleRes = res;
         mBreadCrumbTitleText = null;
         return this;
     }
 
+    @Override
     public FragmentTransaction setBreadCrumbTitle(CharSequence text) {
         mBreadCrumbTitleRes = 0;
         mBreadCrumbTitleText = text;
         return this;
     }
 
+    @Override
     public FragmentTransaction setBreadCrumbShortTitle(int res) {
         mBreadCrumbShortTitleRes = res;
         mBreadCrumbShortTitleText = null;
         return this;
     }
 
+    @Override
     public FragmentTransaction setBreadCrumbShortTitle(CharSequence text) {
         mBreadCrumbShortTitleRes = 0;
         mBreadCrumbShortTitleText = text;
@@ -521,10 +542,12 @@ final class BackStackRecord extends FragmentTransaction implements
         }
     }
 
+    @Override
     public int commit() {
         return commitInternal(false);
     }
 
+    @Override
     public int commitAllowingStateLoss() {
         return commitInternal(true);
     }
@@ -716,6 +739,7 @@ final class BackStackRecord extends FragmentTransaction implements
         return mTransitionStyle;
     }
 
+    @Override
     public boolean isEmpty() {
         return mNumOp == 0;
     }

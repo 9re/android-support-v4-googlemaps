@@ -16,6 +16,7 @@
 
 package android.support.v4.app;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -318,7 +319,7 @@ public class ListFragment extends Fragment {
     public ListAdapter getListAdapter() {
         return mAdapter;
     }
-
+    
     private void ensureList() {
         if (mList != null) {
             return;
