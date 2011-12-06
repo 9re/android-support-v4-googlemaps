@@ -13,14 +13,17 @@ public interface FragmentActivityFeature {
     void onAttachFragment(Fragment fragment);
     FragmentManager getSupportFragmentManager();
     void startActivityFromFragment(Fragment fragment, Intent intent, int requestCode);
+    @Deprecated
     void invalidateSupportFragmentIndex(int index);
     LoaderManager getSupportLoaderManager();
+    @Deprecated
     LoaderManagerImpl getLoaderManager(int index, boolean started, boolean create);
     
     /*** 
      * getter for the fields of original FragmentActivity
      * which are accessed internally in the package.
      ***/
+    @Deprecated
     FragmentManagerImpl<?> getFragmentManagerImpl();
     boolean isRetaining();
     Handler getHandler();

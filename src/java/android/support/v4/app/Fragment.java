@@ -84,6 +84,7 @@ final class FragmentState implements Parcelable {
         mSavedFragmentState = in.readBundle();
     }
     
+    @SuppressWarnings("deprecation")
     public <FragmentActivityImpl extends Activity & FragmentActivityFeature> Fragment
         instantiate(FragmentActivityImpl activity) {
         if (mInstance != null) {
@@ -730,6 +731,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     /**
      * Return the LoaderManager for this fragment, creating it if needed.
      */
+    @SuppressWarnings("deprecation")
     public LoaderManager getLoaderManager() {
         if (mLoaderManager != null) {
             return mLoaderManager;
@@ -938,6 +940,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      * tied to {@link Activity#onStart() Activity.onStart} of the containing
      * Activity's lifecycle.
      */
+    @SuppressWarnings("deprecation")
     public void onStart() {
         mCalled = true;
         
@@ -1028,6 +1031,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      * Called when the fragment is no longer in use.  This is called
      * after {@link #onStop()} and before {@link #onDetach()}.
      */
+    @SuppressWarnings("deprecation")
     public void onDestroy() {
         mCalled = true;
         //Log.v("foo", "onDestroy: mCheckedForLoaderManager=" + mCheckedForLoaderManager
@@ -1308,6 +1312,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
         onStop();
     }
 
+    @SuppressWarnings("deprecation")
     void performReallyStop() {
         if (mLoadersStarted) {
             mLoadersStarted = false;

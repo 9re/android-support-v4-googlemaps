@@ -707,6 +707,7 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
         return mLoaderManager;
     }
     
+    @Deprecated
     public LoaderManagerImpl getLoaderManager(int index, boolean started, boolean create) {
         if (mAllLoaderManagers == null) {
             mAllLoaderManagers = new HCSparseArray<LoaderManagerImpl>();

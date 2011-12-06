@@ -314,6 +314,7 @@ class LoaderManagerImpl extends LoaderManager {
             }
         }
         
+        @SuppressWarnings("deprecation")
         void destroy() {
             if (DEBUG) Log.v(TAG, "  Destroying: " + this);
             mDestroyed = true;
@@ -401,6 +402,7 @@ class LoaderManagerImpl extends LoaderManager {
             }
         }
 
+        @SuppressWarnings("deprecation")
         void callOnLoadFinished(Loader<Object> loader, Object data) {
             if (mCallbacks != null) {
                 String lastBecause = null;

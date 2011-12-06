@@ -756,6 +756,7 @@ final class FragmentManagerImpl<FragmentActivityImpl extends Activity & Fragment
         return null;
     }
     
+    @SuppressWarnings("deprecation")
     void moveToState(Fragment f, int newState, int transit, int transitionStyle) {
         // Fragments that are not currently added will sit in the onCreate() state.
         if (!f.mAdded && newState > Fragment.CREATED) {

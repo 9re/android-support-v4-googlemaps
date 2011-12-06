@@ -708,6 +708,7 @@ public class FragmentMapActivity extends MapActivity implements FragmentActivity
         return mLoaderManager;
     }
     
+    @Deprecated
     public LoaderManagerImpl getLoaderManager(int index, boolean started, boolean create) {
         if (mAllLoaderManagers == null) {
             mAllLoaderManagers = new HCSparseArray<LoaderManagerImpl>();
