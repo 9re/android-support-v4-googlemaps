@@ -15,5 +15,3 @@
 	<classpathentry kind="lib" path="lib/maps-15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
-
-
