@@ -26,6 +26,8 @@ import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.reflect.Modifier;
 
+import javax.crypto.Mac;
+
 /**
  * Static library support version of the framework's {@link android.app.LoaderManager}.
  * Used to write apps that run on platforms prior to Android 3.0.  When running
@@ -198,7 +200,7 @@ class LoaderManagerImpl extends LoaderManager {
     // previously run loader until the new loader's data is available.
     final HCSparseArray<LoaderInfo> mInactiveLoaders = new HCSparseArray<LoaderInfo>();
 
-    FragmentActivity mActivity;
+    FragmentActivityFeature mActivity;
     boolean mStarted;
     boolean mRetaining;
     boolean mRetainingStarted;
@@ -320,6 +322,7 @@ class LoaderManagerImpl extends LoaderManager {
             }
         }
         
+        @SuppressWarnings("deprecation")
         void destroy() {
             if (DEBUG) Log.v(TAG, "  Destroying: " + this);
             mDestroyed = true;
@@ -329,14 +332,15 @@ class LoaderManagerImpl extends LoaderManager {
                 if (DEBUG) Log.v(TAG, "  Reseting: " + this);
                 String lastBecause = null;
                 if (mActivity != null) {
-                    lastBecause = mActivity.mFragments.mNoTransactionsBecause;
-                    mActivity.mFragments.mNoTransactionsBecause = "onLoaderReset";
+                    FragmentManagerImpl<?> managerImpl = mActivity.getFragmentManagerImpl();
+                    lastBecause = managerImpl.mNoTransactionsBecause;
+                    managerImpl.mNoTransactionsBecause = "onLoaderReset";
                 }
                 try {
                     mCallbacks.onLoaderReset(mLoader);
                 } finally {
                     if (mActivity != null) {
-                        mActivity.mFragments.mNoTransactionsBecause = lastBecause;
+                        mActivity.getFragmentManagerImpl().mNoTransactionsBecause = lastBecause;
                     }
                 }
             }
@@ -355,6 +359,7 @@ class LoaderManagerImpl extends LoaderManager {
             }
         }
         
+        @SuppressWarnings("deprecation")
         @Override public void onLoadComplete(Loader<Object> loader, Object data) {
             if (DEBUG) Log.v(TAG, "onLoadComplete: " + this);
             
@@ -407,16 +412,18 @@ class LoaderManagerImpl extends LoaderManager {
             }
 
             if (mActivity != null && !hasRunningLoaders()) {
-                mActivity.mFragments.startPendingDeferredFragments();
+                mActivity.getFragmentManagerImpl().startPendingDeferredFragments();
             }
         }
 
         void callOnLoadFinished(Loader<Object> loader, Object data) {
             if (mCallbacks != null) {
                 String lastBecause = null;
+                @SuppressWarnings("deprecation")
+                FragmentManagerImpl<?> managerImpl = mActivity.getFragmentManagerImpl();
                 if (mActivity != null) {
-                    lastBecause = mActivity.mFragments.mNoTransactionsBecause;
-                    mActivity.mFragments.mNoTransactionsBecause = "onLoadFinished";
+                    lastBecause = managerImpl.mNoTransactionsBecause;
+                    managerImpl.mNoTransactionsBecause = "onLoadFinished";
                 }
                 try {
                     if (DEBUG) Log.v(TAG, "  onLoadFinished in " + loader + ": "
@@ -424,7 +431,7 @@ class LoaderManagerImpl extends LoaderManager {
                     mCallbacks.onLoadFinished(loader, data);
                 } finally {
                     if (mActivity != null) {
-                        mActivity.mFragments.mNoTransactionsBecause = lastBecause;
+                        managerImpl.mNoTransactionsBecause = lastBecause;
                     }
                 }
                 mDeliveredData = true;
@@ -471,12 +478,12 @@ class LoaderManagerImpl extends LoaderManager {
         }
     }
     
-    LoaderManagerImpl(FragmentActivity activity, boolean started) {
+    LoaderManagerImpl(FragmentActivityFeature activity, boolean started) {
         mActivity = activity;
         mStarted = started;
     }
     
-    void updateActivity(FragmentActivity activity) {
+    void updateActivity(FragmentActivityFeature activity) {
         mActivity = activity;
     }
     
@@ -650,6 +657,7 @@ class LoaderManagerImpl extends LoaderManager {
      * be using it when you do this.
      * @param id Identifier of the Loader to be destroyed.
      */
+    @SuppressWarnings("deprecation")
     public void destroyLoader(int id) {
         if (mCreatingLoader) {
             throw new IllegalStateException("Called while creating a loader");
@@ -669,7 +677,7 @@ class LoaderManagerImpl extends LoaderManager {
             info.destroy();
         }
         if (mActivity != null && !hasRunningLoaders()) {
-            mActivity.mFragments.startPendingDeferredFragments();
+            mActivity.getFragmentManagerImpl().startPendingDeferredFragments();
         }
     }
 

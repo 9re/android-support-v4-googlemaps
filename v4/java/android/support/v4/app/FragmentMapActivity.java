@@ -16,11 +16,6 @@
 
 package android.support.v4.app;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +32,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.google.android.maps.MapActivity;
 
 /**
  * Base class for activities that want to use the support-based
@@ -65,7 +67,7 @@ import android.view.Window;
  * state, this may be a snapshot slightly before what the user last saw.</p>
  * </ul>
  */
-public class FragmentActivity extends Activity implements FragmentActivityFeature {
+public class FragmentMapActivity extends MapActivity implements FragmentActivityFeature {
     private static final String TAG = "FragmentActivity";
     
     private static final String FRAGMENTS_TAG = "android:support:fragments";
@@ -95,7 +97,7 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
         }
 
     };
-    final FragmentManagerImpl<FragmentActivity> mFragments = new FragmentManagerImpl<FragmentActivity>();
+    final FragmentManagerImpl<FragmentMapActivity> mFragments = new FragmentManagerImpl<FragmentMapActivity>();
     
     boolean mCreated;
     boolean mResumed;
@@ -744,5 +746,10 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
     @Override
     public Handler getHandler() {
         return mHandler;
+    }
+
+    @Override
+    protected boolean isRouteDisplayed() {
+        return false;
     }
 }

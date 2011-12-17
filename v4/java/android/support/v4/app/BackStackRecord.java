@@ -36,7 +36,7 @@ final class BackStackState implements Parcelable {
     final int mBreadCrumbShortTitleRes;
     final CharSequence mBreadCrumbShortTitleText;
 
-    public BackStackState(FragmentManagerImpl fm, BackStackRecord bse) {
+    public BackStackState(FragmentManagerImpl<?> fm, BackStackRecord bse) {
         int numRemoved = 0;
         BackStackRecord.Op op = bse.mHead;
         while (op != null) {
@@ -91,7 +91,7 @@ final class BackStackState implements Parcelable {
         mBreadCrumbShortTitleText = TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(in);
     }
 
-    public BackStackRecord instantiate(FragmentManagerImpl fm) {
+    public BackStackRecord instantiate(FragmentManagerImpl<?> fm) {
         BackStackRecord bse = new BackStackRecord(fm);
         int pos = 0;
         while (pos < mOps.length) {
@@ -165,7 +165,7 @@ final class BackStackRecord extends FragmentTransaction implements
         FragmentManager.BackStackEntry, Runnable {
     static final String TAG = "BackStackEntry";
 
-    final FragmentManagerImpl mManager;
+    final FragmentManagerImpl<?> mManager;
 
     static final int OP_NULL = 0;
     static final int OP_ADD = 1;
