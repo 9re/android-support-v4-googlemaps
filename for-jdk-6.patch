@@ -1,11 +1,3 @@
-diff --git lib/android-14.jar lib/android-14.jar
-deleted file mode 100644
-index edd1c82..0000000
-Binary files lib/android-14.jar and /dev/null differ
-diff --git lib/maps-14.jar lib/maps-14.jar
-deleted file mode 100644
-index 36317e3..0000000
-Binary files lib/maps-14.jar and /dev/null differ
 diff --git v4/java/android/support/v4/app/Fragment.java v4/java/android/support/v4/app/Fragment.java
 index d208f7d..a76c08d 100644
 --- v4/java/android/support/v4/app/Fragment.java
