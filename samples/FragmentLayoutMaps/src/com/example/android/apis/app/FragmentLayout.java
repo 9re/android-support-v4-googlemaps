@@ -23,7 +23,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentMapActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -40,7 +40,7 @@ import android.widget.ListView;
  * This sample provides a different layout (and activity flow) when run in
  * landscape.
  */
-public class FragmentLayout extends FragmentActivity {
+public class FragmentLayout extends FragmentMapActivity {
 
 	// Only one MapView instance is allowed per MapActivity,
 	// so we inflate them in the MapActivity and tie their 
