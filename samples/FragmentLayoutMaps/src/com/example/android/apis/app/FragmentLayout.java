@@ -256,14 +256,12 @@ public class FragmentLayout extends FragmentMapActivity {
 				mMapController.animateTo( new GeoPoint( (int)(e.lat * 1.0e6), (int)(e.lng * 1.0e6) ) );
 				mMapController.setZoom( e.zoomLevel );
 			}
+			removeFromOldParent();
 			
 			return mMapViewContainer;
 		}
 		
-		@Override
-		public void onDestroyView() {
-			super.onDestroyView();
-
+		void removeFromOldParent() {
 			// The way MainActivity creates this fragment, it will call onCreateView()
 			// each time we start (or navigate back to) this map.  To prevent the
 			// "You are only allowed to have a single MapView in a MapActivity" message,
