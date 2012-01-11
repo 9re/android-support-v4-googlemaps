@@ -1044,7 +1044,7 @@ final class FragmentManagerImpl<FragmentActivityImpl extends Activity & Fragment
                             if (!f.mRetaining) {
                                 makeInactive(f);
                             } else {
-                                f.setActivity(null);
+                                f.setActivity((FragmentActivityImpl)null);
                                 f.mFragmentManager = null;
                             }
                         }

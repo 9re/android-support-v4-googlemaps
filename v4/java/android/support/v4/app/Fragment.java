@@ -542,8 +542,8 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      * Return the Activity this fragment is currently associated with.
      */
     @SuppressWarnings("unchecked")
-    final public <FragmentActivityImpl extends Activity & FragmentActivityFeature> FragmentActivityImpl getActivity() {
-        return (FragmentActivityImpl) mActivity;
+    Activity getActivity() {
+        return mActivity;
     }
     <FragmentActivityImpl extends Activity & FragmentActivityFeature> void setActivity(FragmentActivityImpl activity) {
         mActivity = activity;
@@ -710,7 +710,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
         if (mHasMenu != hasMenu) {
             mHasMenu = hasMenu;
             if (isAdded() && !isHidden()) {
-                getActivity().supportInvalidateOptionsMenu();
+                ((FragmentActivityFeature) getActivity()).supportInvalidateOptionsMenu();
             }
         }
     }
@@ -728,7 +728,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
         if (mMenuVisible != menuVisible) {
             mMenuVisible = menuVisible;
             if (mHasMenu && isAdded() && !isHidden()) {
-                getActivity().supportInvalidateOptionsMenu();
+                ((FragmentActivityFeature) getActivity()).supportInvalidateOptionsMenu();
             }
         }
     }
@@ -773,7 +773,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
             throw new IllegalStateException("Fragment " + this + " not attached to Activity");
         }
         mCheckedForLoaderManager = true;
-        mLoaderManager = getActivity().getLoaderManager(mIndex, mLoadersStarted, true);
+        mLoaderManager = ((FragmentActivityFeature)getActivity()).getLoaderManager(mIndex, mLoadersStarted, true);
         return mLoaderManager;
     }
     
@@ -785,7 +785,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
         if (mActivity == null) {
             throw new IllegalStateException("Fragment " + this + " not attached to Activity");
         }
-        getActivity().startActivityFromFragment(this, intent, -1);
+        ((FragmentActivityFeature)getActivity()).startActivityFromFragment(this, intent, -1);
     }
     
     /**
@@ -796,7 +796,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
         if (mActivity == null) {
             throw new IllegalStateException("Fragment " + this + " not attached to Activity");
         }
-        getActivity().startActivityFromFragment(this, intent, requestCode);
+        ((FragmentActivityFeature)getActivity()).startActivityFromFragment(this, intent, requestCode);
     }
     
     /**
@@ -981,7 +981,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
             mLoadersStarted = true;
             if (!mCheckedForLoaderManager) {
                 mCheckedForLoaderManager = true;
-                mLoaderManager = getActivity().getLoaderManager(mIndex, mLoadersStarted, false);
+                mLoaderManager = ((FragmentActivityFeature)getActivity()).getLoaderManager(mIndex, mLoadersStarted, false);
             }
             if (mLoaderManager != null) {
                 mLoaderManager.doStart();
@@ -1071,7 +1071,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
         //        + " mLoaderManager=" + mLoaderManager);
         if (!mCheckedForLoaderManager) {
             mCheckedForLoaderManager = true;
-            mLoaderManager = getActivity().getLoaderManager(mIndex, mLoadersStarted, false);
+            mLoaderManager = ((FragmentActivityFeature)getActivity()).getLoaderManager(mIndex, mLoadersStarted, false);
         }
         if (mLoaderManager != null) {
             mLoaderManager.doDestroy();
@@ -1351,10 +1351,10 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
             mLoadersStarted = false;
             if (!mCheckedForLoaderManager) {
                 mCheckedForLoaderManager = true;
-                mLoaderManager = getActivity().getLoaderManager(mIndex, mLoadersStarted, false);
+                mLoaderManager = ((FragmentActivityFeature)getActivity()).getLoaderManager(mIndex, mLoadersStarted, false);
             }
             if (mLoaderManager != null) {
-                if (!getActivity().isRetaining()) {
+                if (!((FragmentActivityFeature) getActivity()).isRetaining()) {
                     mLoaderManager.doStop();
                 } else {
                     mLoaderManager.doRetain();
