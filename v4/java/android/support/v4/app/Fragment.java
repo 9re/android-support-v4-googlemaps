@@ -542,7 +542,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
      * Return the Activity this fragment is currently associated with.
      */
     @SuppressWarnings("unchecked")
-    Activity getActivity() {
+    public Activity getActivity() {
         return mActivity;
     }
     <FragmentActivityImpl extends Activity & FragmentActivityFeature> void setActivity(FragmentActivityImpl activity) {
