@@ -16,6 +16,12 @@
 
 package android.support.v4.app;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -31,13 +37,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.google.android.maps.MapActivity;
 
 /**
  * Base class for activities that want to use the support-based
@@ -66,7 +65,7 @@ import com.google.android.maps.MapActivity;
  * state, this may be a snapshot slightly before what the user last saw.</p>
  * </ul>
  */
-public class FragmentActivity extends MapActivity {
+public class FragmentActivity extends Activity implements FragmentActivityFeature {
     private static final String TAG = "FragmentActivity";
     
     private static final String FRAGMENTS_TAG = "android:support:fragments";
@@ -96,7 +95,7 @@ public class FragmentActivity extends MapActivity {
         }
 
     };
-    final FragmentManagerImpl mFragments = new FragmentManagerImpl();
+    final FragmentManagerImpl<FragmentActivity> mFragments = new FragmentManagerImpl<FragmentActivity>();
     
     boolean mCreated;
     boolean mResumed;
@@ -691,7 +690,7 @@ public class FragmentActivity extends MapActivity {
         super.startActivityForResult(intent, ((fragment.mIndex+1)<<16) + (requestCode&0xffff));
     }
     
-    void invalidateSupportFragmentIndex(int index) {
+    public void invalidateSupportFragmentIndex(int index) {
         //Log.v(TAG, "invalidateFragmentIndex: index=" + index);
         if (mAllLoaderManagers != null) {
             LoaderManagerImpl lm = mAllLoaderManagers.get(index);
@@ -718,7 +717,7 @@ public class FragmentActivity extends MapActivity {
         return mLoaderManager;
     }
     
-    LoaderManagerImpl getLoaderManager(int index, boolean started, boolean create) {
+    public LoaderManagerImpl getLoaderManager(int index, boolean started, boolean create) {
         if (mAllLoaderManagers == null) {
             mAllLoaderManagers = new HCSparseArray<LoaderManagerImpl>();
         }
@@ -735,7 +734,17 @@ public class FragmentActivity extends MapActivity {
     }
 
     @Override
-    protected boolean isRouteDisplayed() {
-        return false;
+    public FragmentManagerImpl<?> getFragmentManagerImpl() {
+        return mFragments;
+    }
+
+    @Override
+    public boolean isRetaining() {
+        return mRetaining;
+    }
+
+    @Override
+    public Handler getHandler() {
+        return mHandler;
     }
 }
