@@ -1,0 +1,41 @@
+1. remove FragmentActivity
+$ cp FragmentActivity.java FragmentMapActivity.java
+$ rm FragmentActivity.java
+
+Then resolve reference errors.
+
+Since my work around is to spit FragmentActivity into
+FragmentActivity and FragmentMapActivity, first
+remove FragmentActivity and make reference errors in eclipse.
+This will be the easiest way to check all references automatically.
+
+
+2. FragmentManagerImpl
+
+-final class FragmentManagerImpl extends FragmentManager {
++final class FragmentManagerImpl<FragmentActivityImpl extends Activity & FragmentActivityFeature> extends FragmentManager {
+
+-    FragmentActivity mActivity;
++    FragmentActivityImpl mActivity;
+
+
+3. Fragment
+
+-    public Fragment instantiate(FragmentActivity activity) {
++    public <FragmentActivityImpl extends Activity & FragmentActivityFeature> Fragment
++        instantiate(FragmentActivityImpl activity) {
+
+-    FragmentActivity mActivity;
++    private Activity mActivity;
+
+4. LoaderManager
+
+-    FragmentActivity mActivity;
++    FragmentActivityFeature mActivity;
+
+5. make FragmentMapActivity then FragmentActivity
+
+
+done!
+
+
