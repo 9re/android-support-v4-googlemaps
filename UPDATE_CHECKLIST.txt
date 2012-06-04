@@ -33,7 +33,7 @@ This will be the easiest way to check all references automatically.
 -    FragmentActivity mActivity;
 +    FragmentActivityFeature mActivity;
 
-5. make FragmentMapActivity then FragmentActivity
+5. make FragmentActivity from FragmentMapActivity
 
 
 done!
