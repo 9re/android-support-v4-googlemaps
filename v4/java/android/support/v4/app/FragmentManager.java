@@ -1574,10 +1574,13 @@ final class FragmentManagerImpl<FragmentActivityImpl extends Activity & Fragment
                     FragmentManagerImpl.VIEW_STATE_TAG, f.mSavedViewState);
         }
         if (!f.mUserVisibleHint) {
+        	if (result == null) {        		
+        		result = new Bundle();        		
+        	}
             // Only add this if it's not the default value
             result.putBoolean(FragmentManagerImpl.USER_VISIBLE_HINT_TAG, f.mUserVisibleHint);
         }
-
+        
         return result;
     }
 
