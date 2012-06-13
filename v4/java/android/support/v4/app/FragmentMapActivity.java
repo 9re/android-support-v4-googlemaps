@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.android.maps.MapActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -65,7 +67,7 @@ import android.view.Window;
  * state, this may be a snapshot slightly before what the user last saw.</p>
  * </ul>
  */
-public class FragmentMapActivity extends Activity implements FragmentActivityFeature {
+public class FragmentMapActivity extends MapActivity implements FragmentActivityFeature {
     private static final String TAG = "FragmentActivity";
     
     private static final String FRAGMENTS_TAG = "android:support:fragments";
@@ -746,5 +748,10 @@ public class FragmentMapActivity extends Activity implements FragmentActivityFea
     @Override
     public Handler getHandler() {
         return mHandler;
+    }
+
+    @Override
+    protected boolean isRouteDisplayed() {
+        return false;
     }
 }
