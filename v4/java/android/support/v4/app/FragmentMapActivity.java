@@ -67,7 +67,7 @@ import android.view.Window;
  * </ul>
  */
 public class FragmentMapActivity extends MapActivity implements FragmentActivityFeature {
-    private static final String TAG ="FragmentMapActivity";
+    private static final String TAG = "FragmentMapActivity";
     
     private static final String FRAGMENTS_TAG = "android:support:fragments";
     
