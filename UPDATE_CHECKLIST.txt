@@ -36,6 +36,12 @@ This will be the easiest way to check all references automatically.
 5. make FragmentActivity from FragmentMapActivity
 
 
+6. check
+
+- FragmentMapActivity extends MapActivity
+- FragmentActivity extends Activity
+
+
 done!
 
 
