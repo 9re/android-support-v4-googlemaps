@@ -1,0 +1,73 @@
+<project name="android-support-v4-googlemaps" default="jar-all">
+	<property name="src.dir" value="." />
+	<property name="build.dir" value="build-splitted" />	
+	<property name="jar-v4-core.file" value="${build.dir}/jar/v4/core/android-support-v4-r7-googlemaps-core.jar" />
+	<property name="jar-v4-maps.file" value="${build.dir}/jar/v4/maps/android-support-v4-r7-googlemaps-maps.jar" />
+	
+	<path id="classpath-core">
+		<fileset dir="lib">
+			<include name="**/android*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="classpath-maps">
+		<fileset dir="lib">
+			<include name="**/maps*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="classpath-jar-core">
+		<fileset dir=".">
+			<include name="${jar-v4-core.file}"/>
+		</fileset>
+	</path>
+	
+	<target name="clean-core">
+		<delete dir="${build.dir}/classes-v4-core"/>
+	</target>
+	
+	<target name="clean-maps">
+		<delete dir="${build.dir}/classes-v4-maps"/>
+	</target>	
+	
+	<target name="compile-core">		
+		<mkdir dir="${build.dir}/classes-v4-core"/>
+		<javac destdir="${build.dir}/classes-v4-core" includeantruntime="false">
+			<src path="${src.dir}/v4" />
+			<include name="java/**/*.java"/>
+			<exclude name="java/**/FragmentMapActivity.java"/>
+			<exclude name="java/**/MapFragment.java"/>
+			<include name="eclair/**/*.java"/>
+			<include name="froyo/**/*.java"/>
+			<include name="gingerbread/**/*.java"/>
+			<include name="honeycomb/**/*.java"/>
+			<include name="honeycomb_mr2/**/*.java"/>
+			<include name="ics/**/*.java"/>
+			<classpath refid="classpath-core"/>
+		</javac>
+	</target>
+	
+	<target name="compile-maps" depends="jar-core">		
+		<mkdir dir="${build.dir}/classes-v4-maps"/>
+		<javac destdir="${build.dir}/classes-v4-maps" includeantruntime="false">
+			<src path="${src.dir}/v4" />
+			<include name="java/**/FragmentMapActivity.java"/>
+			<include name="java/**/MapFragment.java"/>
+			<classpath refid="classpath-jar-core"/>
+			<classpath refid="classpath-maps"/>
+			<classpath refid="classpath-core"/>
+		</javac>		
+	</target>
+	
+	<target name="jar-core" depends="clean-core, compile-core">
+		<mkdir dir="${build.dir}/jar/v4/core"/>
+		<jar destfile="${jar-v4-core.file}" basedir="${build.dir}/classes-v4-core" />
+	</target>
+	
+	<target name="jar-maps" depends="clean-maps, compile-maps">
+		<mkdir dir="${build.dir}/jar/v4/maps"/>
+		<jar destfile="${jar-v4-maps.file}" basedir="${build.dir}/classes-v4-maps" />
+	</target>
+	
+	<target name="jar-all" depends="jar-core, jar-maps"/>	
+</project>
