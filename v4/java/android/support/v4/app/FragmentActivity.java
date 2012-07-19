@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.support.v4.util.SparseArrayCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -86,7 +87,7 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
                     }
                     break;
                 case MSG_RESUME_PENDING:
-                    mFragments.dispatchResume();
+                    onResumeFragments();
                     mFragments.execPendingActions();
                     break;
                 default:
@@ -107,7 +108,7 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
 
     boolean mCheckedForLoaderManager;
     boolean mLoadersStarted;
-    HCSparseArray<LoaderManagerImpl> mAllLoaderManagers;
+    SparseArrayCompat<LoaderManagerImpl> mAllLoaderManagers;
     LoaderManagerImpl mLoaderManager;
     
     static final class NonConfigurationInstances {
@@ -115,7 +116,7 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
         Object custom;
         HashMap<String, Object> children;
         ArrayList<Fragment> fragments;
-        HCSparseArray<LoaderManagerImpl> loaders;
+        SparseArrayCompat<LoaderManagerImpl> loaders;
     }
     
     static class FragmentTag {
@@ -149,8 +150,9 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
                 Log.w(TAG, "Activity result no fragment exists for index: 0x"
                         + Integer.toHexString(requestCode));
                 return;
+            } else {
+                frag.onActivityResult(requestCode&0xffff, resultCode, data);
             }
-            frag.onActivityResult(requestCode&0xffff, resultCode, data);
             return;
         }
         
@@ -387,13 +389,19 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
         mResumed = false;
         if (mHandler.hasMessages(MSG_RESUME_PENDING)) {
             mHandler.removeMessages(MSG_RESUME_PENDING);
-            mFragments.dispatchResume();
+            onResumeFragments();
         }
         mFragments.dispatchPause();
     }
 
     /**
-     * Dispatch onResume() to fragments.
+     * Dispatch onResume() to fragments.  Note that for better inter-operation
+     * with older versions of the platform, at the point of this call the
+     * fragments attached to the activity are <em>not</em> resumed.  This means
+     * that in some cases the previous state may still be saved, not allowing
+     * fragment transactions that modify the state.  To correctly interact
+     * with fragments in their proper state, you should instead override
+     * {@link #onResumeFragments()}.
      */
     @Override
     protected void onResume() {
@@ -410,8 +418,18 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
     protected void onPostResume() {
         super.onPostResume();
         mHandler.removeMessages(MSG_RESUME_PENDING);
-        mFragments.dispatchResume();
+        onResumeFragments();
         mFragments.execPendingActions();
+    }
+
+    /**
+     * This is the fragment-orientated version of {@link #onResume()} that you
+     * can override to perform operations in the Activity at the same point
+     * where its fragments are resumed.  Be sure to always call through to
+     * the super-class.
+     */
+    protected void onResumeFragments() {
+        mFragments.dispatchResume();
     }
 
     /**
@@ -511,6 +529,10 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
                 mLoaderManager.doStart();
             } else if (!mCheckedForLoaderManager) {
                 mLoaderManager = getLoaderManager(-1, mLoadersStarted, false);
+                // the returned loader manager may be a new one, so we have to start it
+                if ((mLoaderManager != null) && (!mLoaderManager.mStarted)) {
+                    mLoaderManager.doStart();
+                }
             }
             mCheckedForLoaderManager = true;
         }
@@ -719,7 +741,7 @@ public class FragmentActivity extends Activity implements FragmentActivityFeatur
     
     public LoaderManagerImpl getLoaderManager(int index, boolean started, boolean create) {
         if (mAllLoaderManagers == null) {
-            mAllLoaderManagers = new HCSparseArray<LoaderManagerImpl>();
+            mAllLoaderManagers = new SparseArrayCompat<LoaderManagerImpl>();
         }
         LoaderManagerImpl lm = mAllLoaderManagers.get(index);
         if (lm == null) {
