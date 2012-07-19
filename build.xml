@@ -1,8 +1,8 @@
 <project name="android-support-v4-googlemaps" default="jar">
 	<property name="src.dir" value="." />
 	<property name="build.dir" value="build" />
-	<property name="jar-v4.file" value="${build.dir}/jar/android-support-v4-r7-googlemaps.jar" />
-	<property name="jar-v13.file" value="${build.dir}/jar/android-support-v13-r7-googlemaps.jar" />
+	<property name="jar-v4.file" value="${build.dir}/jar/android-support-v4-r9-googlemaps.jar" />
+	<property name="jar-v13.file" value="${build.dir}/jar/android-support-v13-r9-googlemaps.jar" />
 
 	<path id="classpath">
 		<fileset dir="lib">
@@ -25,6 +25,8 @@
 			<include name="honeycomb/**/*.java"/>
 			<include name="honeycomb_mr2/**/*.java"/>
 			<include name="ics/**/*.java"/>
+			<include name="ics-mr1/**/*.java"/>
+			<include name="jellybean/**/*.java"/>
 			<classpath refid="classpath"/>
 		</javac>
 
@@ -40,6 +42,7 @@
 			<include name="honeycomb_mr2/**/*.java"/>
 			<include name="ics/**/*.java"/>
 			<include name="ics-mr1/**/*.java"/>
+			<include name="jellybean/**/*.java"/>
 			<classpath refid="classpath"/>
 		</javac>
 	</target>

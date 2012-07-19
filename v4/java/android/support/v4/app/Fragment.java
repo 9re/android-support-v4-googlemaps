@@ -223,7 +223,7 @@ public class Fragment implements ComponentCallbacks, OnCreateContextMenuListener
     FragmentManagerImpl<?> mFragmentManager;
 
     // Activity this fragment is attached to.
-    private Activity mActivity;
+    protected Activity mActivity;
     
     // The optional identifier for this fragment -- either the container ID if it
     // was dynamically added to the view hierarchy, or the ID supplied in

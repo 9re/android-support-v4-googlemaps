@@ -11,7 +11,7 @@
 	<classpathentry kind="src" path="v13/ics"/>
 	<classpathentry kind="src" path="v13/ics-mr1"/>
 	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
-	<classpathentry kind="lib" path="lib/android-15.jar"/>
-	<classpathentry kind="lib" path="lib/maps-15.jar"/>
+	<classpathentry kind="lib" path="lib/android-16.jar"/>
+	<classpathentry kind="lib" path="lib/maps-16.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
