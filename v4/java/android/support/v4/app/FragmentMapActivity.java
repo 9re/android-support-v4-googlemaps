@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 import com.google.android.maps.MapActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -69,7 +68,7 @@ import android.view.Window;
  * </ul>
  */
 public class FragmentMapActivity extends MapActivity implements FragmentActivityFeature {
-    private static final String TAG = "FragmentActivity";
+    private static final String TAG = "FragmentMapActivity";
     
     private static final String FRAGMENTS_TAG = "android:support:fragments";
     
