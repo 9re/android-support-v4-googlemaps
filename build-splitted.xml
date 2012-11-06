@@ -1,8 +1,8 @@
-<project name="android-support-v4-googlemaps" default="jar-all">
+<project name="android-support-v4-googlemaps" default="jars-all">
 	<property name="src.dir" value="." />
 	<property name="build.dir" value="build-splitted" />	
-	<property name="jar-v4-core.file" value="${build.dir}/jar/v4/core/android-support-v4-r7-googlemaps-core.jar" />
-	<property name="jar-v4-maps.file" value="${build.dir}/jar/v4/maps/android-support-v4-r7-googlemaps-maps.jar" />
+	<property name="jar-v4-core.file" value="${build.dir}/jars/v4/core/android-support-v4-r9-googlemaps-core.jar" />
+	<property name="jar-v4-maps.file" value="${build.dir}/jars/v4/maps/android-support-v4-r9-googlemaps-maps.jar" />
 	
 	<path id="classpath-core">
 		<fileset dir="lib">
@@ -43,6 +43,8 @@
 			<include name="honeycomb/**/*.java"/>
 			<include name="honeycomb_mr2/**/*.java"/>
 			<include name="ics/**/*.java"/>
+			<include name="ics-mr1/**/*.java"/>
+			<include name="jellybean/**/*.java"/>
 			<classpath refid="classpath-core"/>
 		</javac>
 	</target>
@@ -60,14 +62,14 @@
 	</target>
 	
 	<target name="jar-core" depends="clean-core, compile-core">
-		<mkdir dir="${build.dir}/jar/v4/core"/>
+		<mkdir dir="${build.dir}/jars/v4/core"/>
 		<jar destfile="${jar-v4-core.file}" basedir="${build.dir}/classes-v4-core" />
 	</target>
 	
 	<target name="jar-maps" depends="clean-maps, compile-maps">
-		<mkdir dir="${build.dir}/jar/v4/maps"/>
+		<mkdir dir="${build.dir}/jars/v4/maps"/>
 		<jar destfile="${jar-v4-maps.file}" basedir="${build.dir}/classes-v4-maps" />
 	</target>
 	
-	<target name="jar-all" depends="jar-core, jar-maps"/>	
+	<target name="jars-all" depends="jar-core, jar-maps"/>	
 </project>
